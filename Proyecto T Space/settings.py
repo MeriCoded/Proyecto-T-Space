@@ -4,3 +4,5 @@ class Settings:
         self.screen_height = 600
         self.bg_color = (0, 0, 0)
         self.fps = 60
+        self.estelar_speed = 5
+        self.bullet_speed = 10
