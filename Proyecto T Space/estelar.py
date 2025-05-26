@@ -8,8 +8,8 @@ class Estelar(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.game = game
-        self.image = pygame.Surface((50, 40))  # Tamaño de la nave, puedes cambiarlo
-        self.image.fill((255, 55, 80))      # Color de la nave, puedes cambiarlo
+        self.image = pygame.Surface((40, 30))  # Tamaño de la nave
+        self.image.fill((255, 55, 80))      # Color de la nave
         self.rect = self.image.get_rect()
         self.rect.centerx = game.settings.screen_width // 2
         self.rect.bottom = game.settings.screen_height - 10
@@ -43,7 +43,7 @@ class Estelar(pygame.sprite.Sprite):
             self.direction.y = 0
         if keys[pygame.K_SPACE]:
             if self.shoot_cooldown <= 0 and self.burst_count == 0:
-                self.burst_count = 3  # Disparar 3 balas
+                self.burst_count = 3  # de cuanto quiero la rafaga
                 self.burst_timer = 0
 
     def handle_burst(self):
@@ -51,7 +51,7 @@ class Estelar(pygame.sprite.Sprite):
             if self.burst_timer <= 0:
                 self.shoot()
                 self.burst_count -= 1
-                self.burst_timer = 7  # frames entre balas (ajusta para más/menos separación)
+                self.burst_timer = 7  # frames entre balas
             else:
                 self.burst_timer -= 1
         if self.shoot_cooldown > 0:
@@ -75,7 +75,7 @@ class Estelar(pygame.sprite.Sprite):
         bullet = Bullet(self.game, self.rect.centerx, self.rect.top)
         self.game.bullets.add(bullet)
         if self.burst_count == 1:
-            self.shoot_cooldown = 15  # cooldown entre ráfagas (ajusta si quieres)
+            self.shoot_cooldown = 15  # cooldown entre ráfagas para que no sea tremendo spam (temporal)
 
 import pygame.sprite
             
@@ -83,8 +83,8 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
         super().__init__()
         self.game = game
-        self.image = pygame.Surface((5, 10))  # Tamaño de la bala
-        self.image.fill((255, 255, 0))  # Color amarillo
+        self.image = pygame.Surface((5, 10))
+        self.image.fill((255, 255, 0))
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.bottom = y
@@ -98,4 +98,4 @@ class Bullet(pygame.sprite.Sprite):
     def update(self):
         self.rect.y -= self.speed
         if self.rect.bottom < 0:
-            self.kill()  # Elimina la bala si sale de la pantalla
+            self.kill()  # Elimina las balitas

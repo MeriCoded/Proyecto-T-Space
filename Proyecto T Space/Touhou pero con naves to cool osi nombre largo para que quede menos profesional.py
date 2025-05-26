@@ -2,10 +2,13 @@ import sys
 
 import pygame
 import time
+import math
+
 
 from settings import Settings
 from estelar import Estelar
 from alien import Alien
+from space import Space
 
 class Window:
     def __init__(self):
@@ -18,40 +21,27 @@ class Window:
         self.estelar = Estelar(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
-        # Crea algunos enemigos de ejemplo
-        for i in range(10):
-            alien = Alien(self, 100 + i*80, 100)
+        self.space = Space(self.screen, self.settings)
+
+        for i in range(4):
+            alien = Alien(self, 40 + i*70, 100)
             self.aliens.add(alien)
 
     def run(self):
         running = True
+        
+
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-            
-            self.screen.fill(self.settings.bg_color)
 
             self.estelar.update_estelar()
             self.bullets.update()
             self.aliens.update()
+            self.space.draw()
 
-            #            import pygame
-            
-            class Alien(pygame.sprite.Sprite):
-                def __init__(self, game, x, y):
-                    super().__init__()
-                    self.game = game
-                    self.image = pygame.Surface((40, 30))
-                    self.image.fill((0, 200, 0))
-                    self.rect = self.image.get_rect()
-                    self.rect.x = x
-                    self.rect.y = y
-            
-                def update(self):
-                    # Puedes agregar movimiento aquí si quieres
-                    pass
-            hits = pygame.sprite.groupcollide(self.aliens, self.bullets, True, True)
+            pygame.sprite.groupcollide(self.aliens, self.bullets, True, True)
 
             self.estelar.draw_estelar()
             self.bullets.draw(self.screen)
@@ -61,6 +51,10 @@ class Window:
 
             pygame.display.flip()
             self.clock.tick(self.settings.fps)
+
+
+
+            
         
         pygame.quit()
         sys.exit()
