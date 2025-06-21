@@ -22,7 +22,7 @@ class Meteor(pygame.sprite.Sprite):
 
         self.images = []
         for i in img_range:
-            meteor_img = pygame.image.load(f"assets/Meteoritos/Meteorito{i}.png").convert_alpha()
+            meteor_img = pygame.image.load(f"Proyecto T Space/assets/Meteoritos/Meteorito{i}.png").convert_alpha()
             meteor_img = pygame.transform.scale(meteor_img, size)
             self.images.append(meteor_img)
         self.image = self.images[0]

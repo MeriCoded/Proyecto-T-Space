@@ -9,7 +9,7 @@ class Space:
         self.settings = settings
         self.bg_images = []
         for i in range(1, 4): #las imagenes del fondo que voy a usar (no voy a usar otra)
-            bg_image = pygame.image.load(f"assets/Espacio/bg{i}.png").convert_alpha()
+            bg_image = pygame.image.load(f"Assets/Espacio/bg{i}.png").convert_alpha()
             self.bg_images.append(bg_image)
         self.bg_height = self.bg_images[0].get_height()
         
