@@ -18,6 +18,8 @@ class Estelar(pygame.sprite.Sprite):
         self.shoot_cooldown = 0
         self.burst_count = 0
         self.burst_timer = 0
+        self.shoot_sound = pygame.mixer.Sound("Assets/Sonidos/disparo.wav")
+        self.shoot_sound.set_volume(0.1)
         # Utilizamos mascaras para generar colisiones pixel-perfect
         #self.mask = pygame.mask.from_surface(self.image) - No es necesario escribirlo
 
@@ -37,7 +39,7 @@ class Estelar(pygame.sprite.Sprite):
         
         if keys[pygame.K_SPACE]:
             if self.shoot_cooldown <= 0 and self.burst_count == 0:
-                self.burst_count = 3  # de cuanto quiero la rafaga
+                self.burst_count = 1  # de cuanto quiero la rafaga
                 self.burst_timer = 0
 
     def handle_burst(self):
@@ -45,7 +47,7 @@ class Estelar(pygame.sprite.Sprite):
             if self.burst_timer <= 0:
                 self.shoot()
                 self.burst_count -= 1
-                self.burst_timer = 7  # frames entre balas
+                self.burst_timer = 5  # frames entre balas
             else:
                 self.burst_timer -= 1
         if self.shoot_cooldown > 0:
@@ -68,6 +70,7 @@ class Estelar(pygame.sprite.Sprite):
     def shoot(self):
         bullet = Bullet(self.game, self.rect.centerx, self.rect.top)
         self.game.bullets.add(bullet)
+        self.shoot_sound.play()  # Reproduce el sonido aquí
         if self.burst_count == 1:
             self.shoot_cooldown = 15  # cooldown entre ráfagas para que no sea tremendo spam (temporal)
 

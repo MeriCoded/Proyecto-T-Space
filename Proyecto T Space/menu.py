@@ -42,10 +42,10 @@ def menu():
 
     #-------SONIDO-------   
     #Sonidos
-    pygame.mixer.music.load("Assets/Sonidos/menu.ogg")
-    pygame.mixer.music.set_volume(0.3) #Ajustar en base al audio final
+    pygame.mixer.music.load("Assets/Sonidos/beat.wav")
+    pygame.mixer.music.set_volume(0.2) #Ajustar en base al audio final
     pygame.mixer.music.play(-1)
-    boton = pygame.mixer.Sound("Assets/Sonidos/boton.ogg")
+    boton = pygame.mixer.Sound("Assets/Sonidos/boton2.wav")
     boton.set_volume(0.5) #Ajustar en base al audio final
 
     #(Para el sonido de los botones)
@@ -59,21 +59,22 @@ def menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+        
+            #Colisiones para botones
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if play_rect.collidepoint(event.pos):
+                    return
+                elif control_rect.collidepoint(event.pos):
+                    controles()
+                elif quit_rect.collidepoint(event.pos):
+                    sys.exit()
+                #----------
+        
         #Mouse
         mouse_pos = pygame.mouse.get_pos()
         play_hovered = play_rect.collidepoint(mouse_pos)
         quit_hovered = quit_rect.collidepoint(mouse_pos)
         control_hovered = control_rect.collidepoint(mouse_pos)
-        
-        #Colisiones para botones
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if play_rect.collidepoint(event.pos):
-                return
-            elif control_rect.collidepoint(event.pos):
-                controles()
-            elif quit_rect.collidepoint(event.pos):
-                sys.exit()
-            #----------
             
         #-------FONDO-------
         fondo_y += velocidad_fondo

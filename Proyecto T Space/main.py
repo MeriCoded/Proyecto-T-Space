@@ -1,7 +1,5 @@
 import sys
 import pygame
-import time #eliminar si no usamos
-import math #eliminar si no usamos
 from random import randint
 from settings import Settings
 from estelar import Estelar
@@ -37,8 +35,12 @@ class Window:
 
         load_meteor_images()
 
+        self.start_time = None
+
     def get_meteor_type(self):
-        elapsed_time = pygame.time.get_ticks() // 1000
+        if self.start_time is None:
+            return "M1"  # O el tipo por defecto
+        elapsed_time = (pygame.time.get_ticks() - self.start_time) // 1000
         if elapsed_time < M2_TIME:
             return "M1"
         elif elapsed_time < M3_TIME:
@@ -50,7 +52,7 @@ class Window:
 
     def show_game_over(self):
         font = pygame.font.SysFont("Fonts/Oxanium-Bold.ttf", 25)
-        text = font.render("PERDISTE (haga click para reiniciar)", True, (255, 255, 255))
+        text = font.render("sos un pete (hace click para reiniciar)", True, (255, 255, 255))
         text_rect = text.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2))
         self.screen.blit(text, text_rect)
         pygame.display.flip()
@@ -65,10 +67,19 @@ class Window:
                     waiting = False
                     self.reset_game()
 
+    def show_victory(self):
+        font = pygame.font.SysFont("Fonts/Oxanium-Bold.ttf", 30)
+        text = font.render("wow, ganaste", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2))
+        self.screen.blit(text, text_rect)
+        pygame.display.flip()
+        pygame.time.wait(3000)  # Espera 3 segundos antes de cerrar o volver al menú
+
     def reset_game(self):
         self.__init__()  # Reinicia el juego desde cero
 
     def run(self):
+        self.start_time = pygame.time.get_ticks()  # El contador empieza aquí
         running = True
 
         while running:
@@ -115,6 +126,10 @@ class Window:
                 for bullet in self.bullets:
                     bullet.draw_bullet()
                 self.meteors_grandes.draw(self.screen)
+
+                if not self.boss.alive and self.boss.visible == False:
+                    self.show_victory()
+                    running = False 
 
                 pygame.display.flip()
 

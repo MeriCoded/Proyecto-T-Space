@@ -1,6 +1,5 @@
 def controles():
     import pygame, sys
-    from menu import menu
     pygame.init()
     pygame.mixer.init()
     size = (360,640)
@@ -24,10 +23,10 @@ def controles():
     
     
     #Posición imagen
-    esc_rect = esc_apagado.get_rect(center=(size[0]//9,40))
+    esc_rect = esc_apagado.get_rect(center=(size[0]// 9, 40))
 
     #-------SONIDO-------
-    boton = pygame.mixer.Sound("Assets/Sonidos/boton.ogg")
+    boton = pygame.mixer.Sound("Assets/Sonidos/boton1.wav")
     boton.set_volume(0.5) #Ajustar en base al audio final
     
     #Sonido botones
@@ -46,7 +45,7 @@ def controles():
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if esc_rect.collidepoint(event.pos):
-                    sys.exit() #ARREGLAR
+                    return
         #Mouse
         mouse_pos = pygame.mouse.get_pos()
         
