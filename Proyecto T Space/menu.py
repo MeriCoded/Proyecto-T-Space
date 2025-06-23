@@ -19,6 +19,7 @@ def menu():
     control_apagado = pygame.image.load("Assets/Menu/control_apagado.png")
     control_brillo = pygame.image.load("Assets/Menu/control_brillo.png")
 
+
     #Escalar imagenes
     logo = pygame.transform.scale(logo,(290,110))
     play_apagado = pygame.transform.scale(play_apagado,(150,60))
@@ -43,10 +44,10 @@ def menu():
     #-------SONIDO-------   
     #Sonidos
     pygame.mixer.music.load("Assets/Sonidos/beat.wav")
-    pygame.mixer.music.set_volume(0.2) #Ajustar en base al audio final
+    pygame.mixer.music.set_volume(0.2)
     pygame.mixer.music.play(-1)
     boton = pygame.mixer.Sound("Assets/Sonidos/boton2.wav")
-    boton.set_volume(0.5) #Ajustar en base al audio final
+    boton.set_volume(0.5)
 
     #(Para el sonido de los botones)
     play_hovered_old = False

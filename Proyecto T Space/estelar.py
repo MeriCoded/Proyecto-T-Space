@@ -1,6 +1,6 @@
 import pygame
 import time
-
+from constants import *
 from settings import Settings
 
 class Estelar(pygame.sprite.Sprite):
@@ -13,7 +13,10 @@ class Estelar(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = game.settings.screen_width // 2
         self.rect.bottom = game.settings.screen_height - 10
+        self.health = 500
+        self.lifes = 3
         self.speed = 5
+        self.level = 0
         self.direction = pygame.math.Vector2(0, 0)
         self.shoot_cooldown = 0
         self.burst_count = 0
@@ -51,7 +54,7 @@ class Estelar(pygame.sprite.Sprite):
             else:
                 self.burst_timer -= 1
         if self.shoot_cooldown > 0:
-            self.shoot_cooldown -= 1
+            self.shoot_cooldown -= 1  
 
     def move(self):
         if self.direction.x and self.direction.y:
@@ -68,8 +71,29 @@ class Estelar(pygame.sprite.Sprite):
             self.rect.bottom = self.game.settings.screen_height
 
     def shoot(self):
-        bullet = Bullet(self.game, self.rect.centerx, self.rect.top)
-        self.game.bullets.add(bullet)
+        score = self.game.score
+        if score >= LEVEL_3:
+            level = 3
+        elif score >= LEVEL_2:
+            level = 2
+        else:
+            level = 1
+        
+        if level == 1:
+            bullet = Bullet(self.game, self.rect.centerx, self.rect.top)
+            self.game.bullets.add(bullet)
+        
+        elif level == 2:
+            bullet1 = Bullet(self.game, self.rect.centerx - 10, self.rect.top)
+            bullet2 = Bullet(self.game, self.rect.centerx + 10, self.rect.top)
+            self.game.bullets.add(bullet1, bullet2)
+            
+        elif level == 3:
+            bullet1 = Bullet(self.game, self.rect.centerx, self.rect.top)
+            bullet2 = Bullet(self.game, self.rect.centerx - 15, self.rect.top + 5)
+            bullet3 = Bullet(self.game, self.rect.centerx + 15, self.rect.top + 5)
+            self.game.bullets.add(bullet1, bullet2, bullet3)
+        
         self.shoot_sound.play()  # Reproduce el sonido aquí
         if self.burst_count == 1:
             self.shoot_cooldown = 15  # cooldown entre ráfagas para que no sea tremendo spam (temporal)
@@ -81,11 +105,12 @@ class Bullet(pygame.sprite.Sprite):
         super().__init__()
         self.game = game
         self.image = pygame.image.load("Assets/Player/Bullet.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (5, 10))
+        self.image = pygame.transform.scale(self.image, (10, 21))
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.bottom = y
         self.speed = game.settings.bullet_speed
+        self.damage = 10
         #self.mask = pygame.mask.from_surface(self.image) - No es necesario escribirlo
 
     def draw_bullet(self):

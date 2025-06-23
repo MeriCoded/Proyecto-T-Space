@@ -3,15 +3,14 @@ import pygame
 from random import randint
 from settings import Settings
 from estelar import Estelar
-from meteor_v2 import *
+from meteor import *
 from space import Space
 from constants import *
 from boss import Boss
 from menu import menu
 from controles import controles
-
-#font = pygame.font.Font('Fonts/Oxanium-Bold.ttf', 20) Posiblemente lo use para el score
-#font.render("Font test", True, 'White')
+from gameover import gameover
+from victory import victory
 
 class Window:
     def __init__(self):
@@ -21,13 +20,14 @@ class Window:
         pygame.display.set_caption("Estelar’s adventure: Space battle")
         self.clock = pygame.time.Clock()
         self.screen_rect = self.screen.get_rect()
+        self.score = 0
 
         self.estelar = Estelar(self)
         self.bullets = pygame.sprite.Group()
         self.space = Space(self.screen, self.settings)
         self.meteors_grandes = pygame.sprite.Group()
         self.last_meteor_time = pygame.time.get_ticks()
-        self.meteor_delay = 600
+        self.meteor_delay = 400
 
         self.boss = Boss(100, 300, delay_ms=10000, max_health=20)
 
@@ -50,31 +50,6 @@ class Window:
         else:
             return "M4"
 
-    def show_game_over(self):
-        font = pygame.font.SysFont("Fonts/Oxanium-Bold.ttf", 25)
-        text = font.render("sos un pete (hace click para reiniciar)", True, (255, 255, 255))
-        text_rect = text.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2))
-        self.screen.blit(text, text_rect)
-        pygame.display.flip()
-
-        waiting = True
-        while waiting:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    waiting = False
-                    self.reset_game()
-
-    def show_victory(self):
-        font = pygame.font.SysFont("Fonts/Oxanium-Bold.ttf", 30)
-        text = font.render("wow, ganaste", True, (255, 255, 255))
-        text_rect = text.get_rect(center=(self.settings.screen_width//2, self.settings.screen_height//2))
-        self.screen.blit(text, text_rect)
-        pygame.display.flip()
-        pygame.time.wait(3000)  # Espera 3 segundos antes de cerrar o volver al menú
-
     def reset_game(self):
         self.__init__()  # Reinicia el juego desde cero
 
@@ -92,7 +67,7 @@ class Window:
             if not self.game_over:
                 current_time = pygame.time.get_ticks()
                 if current_time - self.last_meteor_time > self.meteor_delay:
-                    if len(self.meteors_grandes) < 12:
+                    if len(self.meteors_grandes) < 30:
                         tipo = self.get_meteor_type()
                         x = randint(0, self.settings.screen_width)
                         y = randint(-200, -100)
@@ -113,13 +88,30 @@ class Window:
                 self.meteors_grandes.update(delta_time)
                 
                 # Colisiones - Entre balas y meteoritos
-                pygame.sprite.groupcollide(self.meteors_grandes, self.bullets, True, True)
-            
+                hits = pygame.sprite.groupcollide(self.meteors_grandes, self.bullets, True, True)
+
+                for meteor in hits:
+                    meteor.break_apart((self.meteors_grandes,))
+                    if meteor.tipo == "M1":
+                        self.score += 10
+                    elif meteor.tipo == "M2":
+                        self.score += 30
+                    elif meteor.tipo == "M3":
+                        self.score += 60
+                    elif meteor.tipo == "M4":
+                        self.score += 80
+                
+                print(self.score)
+                    
                 # Colisiones - Entre Estelar y los meteoritos
                 collided_meteors = pygame.sprite.spritecollide(self.estelar, self.meteors_grandes, True, pygame.sprite.collide_mask)
 
                 if collided_meteors:
-                    self.game_over = True
+                    
+                    self.estelar.lifes -= 1
+                    
+                    if self.estelar.lifes <= 0:
+                            self.game_over = True
 
                 self.estelar.draw_estelar()
                 self.bullets.draw(self.screen)
@@ -128,18 +120,26 @@ class Window:
                 self.meteors_grandes.draw(self.screen)
 
                 if not self.boss.alive and self.boss.visible == False:
-                    self.show_victory()
-                    running = False 
+                    ganar = victory()
+                    if ganar == "retry":
+                        self. reset_game()
+                    else:
+                        running = False 
 
                 pygame.display.flip()
 
             else:
-                self.show_game_over()
+                perder = gameover()
+                if perder == "retry":
+                    self.reset_game()
+                else:
+                    running = False
 
         pygame.quit()
         sys.exit()
 
 if __name__ == "__main__":
     menu()
-    ventana = Window()
-    ventana.run()
+    while True:
+        ventana = Window()
+        ventana.run()

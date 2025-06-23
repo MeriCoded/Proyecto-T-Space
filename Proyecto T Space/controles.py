@@ -14,6 +14,9 @@ def controles():
     barra = pygame.image.load("Assets/Controles/barra.png")
     esc_apagado = pygame.image.load("Assets/Controles/esc_apagado.png")
     esc_brillo = pygame.image.load("Assets/Controles/esc_brillo.png")
+    esc_apagado = pygame.image.load("Assets/Menu/esc_apagado.png")
+    esc_brillo = pygame.image.load("Assets/Menu/esc_brillo.png")
+
 
     #Escalar imagenes
     flechas = pygame.transform.scale(flechas,(180,120))
@@ -26,6 +29,11 @@ def controles():
     esc_rect = esc_apagado.get_rect(center=(size[0]// 9, 40))
 
     #-------SONIDO-------
+    if not pygame.mixer.music.get_busy():
+        pygame.mixer.music.load("Assets/Sonidos/beat.wav")
+        pygame.mixer.music.set_volume(0.2) #Ajustar en base al audio final
+        pygame.mixer.music.play(-1)
+    pygame.mixer.Sound("Assets/Sonidos/boton1.wav")
     boton = pygame.mixer.Sound("Assets/Sonidos/boton1.wav")
     boton.set_volume(0.5) #Ajustar en base al audio final
     

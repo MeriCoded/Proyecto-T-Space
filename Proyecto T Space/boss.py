@@ -4,10 +4,10 @@ import math
 
 class Boss:
     def __init__(self,x,y, delay_ms, max_health):
-        self.image = pygame.Surface((40, 30))
-        self.image.fill((255, 55, 80))
+        self.image = pygame.image.load("assets/Boss/boss.png").convert_alpha()
+        original_image = pygame.image.load("assets/Boss/boss.png").convert_alpha()
+        self.image=pygame.transform.scale(original_image,(80, 60))
         self.rect = self.image.get_rect()
-        
         self.visible = False
         self.delay = delay_ms
         self.start_time = pygame.time.get_ticks()
@@ -31,7 +31,7 @@ class Boss:
     
     def draw(self, screen):
         if self.visible and self.alive:
-         pygame.draw.rect(screen, (255, 55, 80), self.rect)
+         screen.blit (self.image, self.rect)
     
     def take_damage(self, damage):
         if self.visible and self.alive:
