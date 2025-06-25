@@ -1,4 +1,4 @@
-def gameover():
+def gameover(score):
     import pygame, sys
     from controles import controles
     pygame.init()
@@ -7,84 +7,88 @@ def gameover():
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
 
-        #-------IMAGENES-------
-        #Cargar imagenes
-    fondo = pygame.image.load("Assets/Espacio/bg1.png")
+    #-------IMAGENES-------
+    #Cargar imagenes
+    background = pygame.image.load("Assets/Espacio/bg1.png")
     cosmos = pygame.image.load("Assets/Espacio/bg4.png")
     gameover = pygame.image.load("Assets/Gameover/game_over.png")
-    retry_apagado = pygame.image.load("Assets/Gameover/retry_apagado.png")
-    retry_brillo = pygame.image.load("Assets/Gameover/retry_brillo.png")
-    quit_apagado = pygame.image.load("Assets/Gameover/quit_apagado.png")
-    quit_brillo = pygame.image.load("Assets/Gameover/quit_brillo.png")
+    retry_off = pygame.image.load("Assets/Gameover/retry_apagado.png")
+    retry_on = pygame.image.load("Assets/Gameover/retry_brillo.png")
+    quit_off = pygame.image.load("Assets/Gameover/quit_apagado.png")
+    quit_on = pygame.image.load("Assets/Gameover/quit_brillo.png")
 
-        #Escalar imagenes
+    #Escalar imagenes
     gameover = pygame.transform.scale(gameover,(250,110))
-    retry_apagado = pygame.transform.scale(retry_apagado,(150,40))
-    retry_brillo = pygame.transform.scale(retry_brillo,(150,40))
-    quit_apagado = pygame.transform.scale(quit_apagado,(120,40))
-    quit_brillo = pygame.transform.scale(quit_brillo,(120,40))
+    retry_off = pygame.transform.scale(retry_off,(150,40))
+    retry_on = pygame.transform.scale(retry_on,(150,40))
+    quit_off = pygame.transform.scale(quit_off,(120,40))
+    quit_on = pygame.transform.scale(quit_on,(120,40))
 
-        #posición imagenes
+    #posición imagenes
     gameover_rect = gameover.get_rect(center=(size[0]//2,200))
-    retry_rect = retry_apagado.get_rect(center=(size[0]//2,350))
-    quit_rect = quit_apagado.get_rect(center=(size[0]//2,450))
+    retry_rect = retry_off.get_rect(center=(size[0]//2,350))
+    quit_rect = quit_off.get_rect(center=(size[0]//2,450))
 
-        #Velocidad fondo
+    #Velocidad fondo
     cosmos_y = 0
     velocidad_cosmos = 2
-    fondo_y = 0
-    velocidad_fondo = 1
+    background_y = 0
+    velocidad_backgound = 1
 
-        #Game Over parpadeante
+    #Game Over parpadeante
     mostrar_gameover = True
     tiempo_parpadeo = 350
     ultimo_cambio = pygame.time.get_ticks()
 
+    #"Score" parpadeante
+    font = pygame.font.Font("Fonts/Oxanium-Bold.ttf", 36)
+    score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+    score_rect = score_text.get_rect(center=(size[0]//2, 280))
 
-        #-------SONIDO-------   
-        #Sonidos
+    #-------SONIDO-------   
+    #Sonidos
     boton = pygame.mixer.Sound("Assets/Sonidos/boton2.wav")
     boton.set_volume(0.5)
 
-        #(Para el sonido de los botones)
+    #(Para el sonido de los botones)
     retry_hovered_old = False
     quit_hovered_old = False
 
-        #-------BUCLE-------
+    #-------BUCLE-------
     while True:
-            #Ventana
+        #Ventana
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                     sys.exit()
             
-                #Colisiones para botones
+            #Colisiones para botones
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if retry_rect.collidepoint(event.pos):
                     return "retry"
                 elif quit_rect.collidepoint(event.pos):
                     return "quit"
-                    #----------
+                #----------
             
-            #Mouse
+        #Mouse
         mouse_pos = pygame.mouse.get_pos()
         retry_hovered = retry_rect.collidepoint(mouse_pos)
         quit_hovered = quit_rect.collidepoint(mouse_pos)
                 
-            #-------FONDO-------
-        fondo_y += velocidad_fondo
+        #-------FONDO-------
+        background_y += velocidad_backgound
         cosmos_y += velocidad_cosmos
         if cosmos_y >=640:
             cosmos_y = 0
-        if fondo_y >=640:
-                fondo_y = 0
+        if background_y >=640:
+                background_y = 0
 
-            #Fondo
-        screen.blit(fondo, (0,fondo_y))
-        screen.blit(fondo, (0, fondo_y - 640))
+        #Fondo
+        screen.blit(background, (0,background_y))
+        screen.blit(background, (0, background_y - 640))
         screen.blit(cosmos, (0,cosmos_y))
         screen.blit(cosmos, (0, cosmos_y - 640))
             
-            #Game over
+        #Game over
         tiempo_actual = pygame.time.get_ticks()
         if tiempo_actual - ultimo_cambio >= tiempo_parpadeo:
             mostrar_gameover = not mostrar_gameover
@@ -92,32 +96,34 @@ def gameover():
             
         if mostrar_gameover:
             screen.blit(gameover, gameover_rect.topleft)
+            screen.blit(score_text, score_rect.topleft)
+
             
-            #Botones
+        #Botones
         if retry_hovered:
-            screen.blit(retry_brillo, retry_rect.topleft)
+            screen.blit(retry_on, retry_rect.topleft)
         else:
-            screen.blit(retry_apagado, retry_rect.topleft)
+            screen.blit(retry_off, retry_rect.topleft)
                 
         if quit_hovered:
-            screen.blit(quit_brillo, quit_rect.topleft)
+            screen.blit(quit_on, quit_rect.topleft)
         else:
-            screen.blit(quit_apagado, quit_rect.topleft)
+            screen.blit(quit_off, quit_rect.topleft)
                 
-                #----------
+            #----------
                 
-            #-------SONIDO-------
-            #Sonido botones
+        #-------SONIDO-------
+        #Sonido botones
         if retry_hovered and not retry_hovered_old:
             boton.play()
         if quit_hovered and not quit_hovered_old:
             boton.play()
 
             
-            #Actualizo los sonidos
+        #Actualizo los sonidos
         retry_hovered_old = retry_hovered
         quit_hovered_old = quit_hovered
 
-            #Actualizo la pantalla
+        #Actualizo la pantalla
         pygame.display.flip()
         clock.tick(60)

@@ -8,25 +8,23 @@ def controles():
 
     #-----IMAGENES-----
     #Cargar imagenes
-    fondo = pygame.image.load("Assets/Espacio/bg1.png")
+    background = pygame.image.load("Assets/Espacio/bg1.png")
     cosmos = pygame.image.load("Assets/Espacio/bg4.png")
     flechas = pygame.image.load("Assets/Controles/flechas.png")
-    barra = pygame.image.load("Assets/Controles/barra.png")
-    esc_apagado = pygame.image.load("Assets/Controles/esc_apagado.png")
-    esc_brillo = pygame.image.load("Assets/Controles/esc_brillo.png")
-    esc_apagado = pygame.image.load("Assets/Menu/esc_apagado.png")
-    esc_brillo = pygame.image.load("Assets/Menu/esc_brillo.png")
+    spacebar = pygame.image.load("Assets/Controles/barra.png")
+    esc_off = pygame.image.load("Assets/Controles/esc_off.png")
+    esc_on = pygame.image.load("Assets/Controles/esc_on.png")
 
 
     #Escalar imagenes
     flechas = pygame.transform.scale(flechas,(180,120))
-    barra = pygame.transform.scale(barra,(200,80))
-    esc_apagado = pygame.transform.scale(esc_apagado,(47,34))
-    esc_brillo = pygame.transform.scale(esc_brillo,(47,34))
+    spacebar = pygame.transform.scale(spacebar,(200,80))
+    esc_off = pygame.transform.scale(esc_off,(47,34))
+    esc_on = pygame.transform.scale(esc_on,(47,34))
     
     
     #Posición imagen
-    esc_rect = esc_apagado.get_rect(center=(size[0]// 9, 40))
+    esc_rect = esc_off.get_rect(center=(size[0]// 9, 40))
 
     #-------SONIDO-------
     if not pygame.mixer.music.get_busy():
@@ -43,8 +41,8 @@ def controles():
     #Velocidad
     cosmos_y = 0
     velocidad_cosmos = 2
-    fondo_y = 0
-    velocidad_fondo = 1
+    background_y = 0
+    velocidad_backgound = 1
 
     while True:
         #Ventana
@@ -62,25 +60,25 @@ def controles():
         
                 
         #-------FONDO-------
-        fondo_y += velocidad_fondo
+        background_y += velocidad_backgound
         cosmos_y += velocidad_cosmos
         if cosmos_y >=640:
             cosmos_y = 0
-        if fondo_y >=640:
-            fondo_y = 0
+        if background_y >=640:
+            background_y = 0
         
         #Fondo
-        screen.blit(fondo, (0,fondo_y))
-        screen.blit(fondo, (0, fondo_y - 640))
+        screen.blit(background, (0,background_y))
+        screen.blit(background, (0, background_y - 640))
         screen.blit(cosmos, (0,cosmos_y))
         screen.blit(cosmos, (0, cosmos_y - 640))
         screen.blit(flechas, [93,160])
-        screen.blit(barra, [84,400])
+        screen.blit(spacebar, [84,400])
         
         if esc_hovered:
-            screen.blit(esc_brillo, esc_rect.topleft)
+            screen.blit(esc_on, esc_rect.topleft)
         else:
-            screen.blit(esc_apagado, esc_rect.topleft)
+            screen.blit(esc_off, esc_rect.topleft)
             
             #----------
         

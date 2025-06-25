@@ -8,13 +8,13 @@ class Estelar(pygame.sprite.Sprite):
     def __init__(self, game):
         super().__init__()
         self.game = game
-        self.image = pygame.image.load("Assets/Player/Estelar.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (80, 60))
+        self.image = pygame.image.load("Assets/Player/Estelar7.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (80, 70))
         self.rect = self.image.get_rect()
         self.rect.centerx = game.settings.screen_width // 2
         self.rect.bottom = game.settings.screen_height - 10
         self.health = 500
-        self.lifes = 3
+        self.lifes = 5
         self.speed = 5
         self.level = 0
         self.direction = pygame.math.Vector2(0, 0)
@@ -72,7 +72,9 @@ class Estelar(pygame.sprite.Sprite):
 
     def shoot(self):
         score = self.game.score
-        if score >= LEVEL_3:
+        if score >= LEVEL_4:
+            level = 4
+        elif score >= LEVEL_3:
             level = 3
         elif score >= LEVEL_2:
             level = 2
@@ -93,12 +95,18 @@ class Estelar(pygame.sprite.Sprite):
             bullet2 = Bullet(self.game, self.rect.centerx - 15, self.rect.top + 5)
             bullet3 = Bullet(self.game, self.rect.centerx + 15, self.rect.top + 5)
             self.game.bullets.add(bullet1, bullet2, bullet3)
+
+        elif level == 4:
+            bullet1 = Bullet(self.game, self.rect.centerx, self.rect.top)
+            bullet2 = Bullet(self.game, self.rect.centerx - 20, self.rect.top + 10)
+            bullet3 = Bullet(self.game, self.rect.centerx + 20, self.rect.top + 10)
+            bullet4 = Bullet(self.game, self.rect.centerx - 10, self.rect.top) 
+            bullet5 = Bullet(self.game, self.rect.centerx + 10, self.rect.top)
+            self.game.bullets.add(bullet1, bullet2, bullet3, bullet4, bullet5)
         
         self.shoot_sound.play()  # Reproduce el sonido aquí
         if self.burst_count == 1:
-            self.shoot_cooldown = 15  # cooldown entre ráfagas para que no sea tremendo spam (temporal)
-
-import pygame.sprite
+            self.shoot_cooldown = 25  # cooldown entre ráfagas para que no sea tremendo spam (temporal)
             
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, game, x, y):

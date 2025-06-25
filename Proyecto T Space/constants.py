@@ -1,7 +1,9 @@
-M1_TIME = 5 #reemplazar por 60
-M2_TIME = 10 #reemplazar por 120
-M3_TIME = 15 #reemplazar por 180
-M4_TIME = 20 #reemplazar por 240
+M1_TIME = 1 
+M2_TIME = 15 
+M3_TIME = 45 
+M4_TIME = 80 
+M5_TIME = 100 
 
-LEVEL_2 = 560
-LEVEL_3 = 1440
+LEVEL_2 = 1000
+LEVEL_3 = 4000
+LEVEL_4 = 6500
