@@ -68,6 +68,7 @@ class Window:
 
     def run(self):
         self.start_time = pygame.time.get_ticks()  # El contador empieza aquí
+        self.boss_alert.reset(self.start_time)     # <-- Añade esta línea
         running = True
 
         while running:
@@ -76,6 +77,7 @@ class Window:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                    return "quit"
 
             if not self.game_over:
                 current_time = pygame.time.get_ticks()
@@ -92,7 +94,7 @@ class Window:
                 self.meteors_grandes.update(delta_time)
                 self.enemy_bullets.update()
                 self.boss.update()
-                self.boss_alert.update(current_time) 
+                self.boss_alert.update(current_time - self.start_time) 
                 self.space.draw()
                 self.enemy_bullets.draw(self.screen)
                 self.boss.draw(self.screen)
