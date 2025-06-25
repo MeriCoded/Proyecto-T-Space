@@ -20,17 +20,31 @@ class Boss(pygame.sprite.Sprite):
 
         self.last_shot_time = 0
         self.shot_delay = 2000  # Tiempo entre disparos en milisegundos
+        
+        # Animación de entrada
+        self.target_y = 23  # Posición final donde debe estar
+        self.entering = False  # Si está en proceso de entrada
 
     def update(self):
         current_time = pygame.time.get_ticks()
         if not self.visible and current_time - self.start_time >= self.delay:
             self.visible = True  # El jefe aparece tras el delay
+            self.entering = True  # Comienza la animación de entrada
+            self.rect.centery = -75  # Empieza fuera de pantalla (arriba)
+            
+        # Animación de entrada 
+        if self.entering and self.visible:
+            if self.rect.centery < self.target_y:
+                self.rect.centery += 1  # Baja muy lentamente (1 píxel por frame)
+            else:
+                self.rect.centery = self.target_y
+                self.entering = False
 
         if self.health <= 0:
             self.alive = False
             self.visible = False  # Deja de mostrarse si muere
 
-        if self.visible and self.alive:
+        if self.visible and self.alive and not self.entering:
             if current_time - self.last_shot_time > self.shot_delay:
                 self.shooting_pattern()
                 self.last_shot_time = current_time
@@ -78,7 +92,6 @@ class Boss(pygame.sprite.Sprite):
             self.wave_shot()
         elif self.pattern_index == 5:
             self.scatter_shot()
-
 
         # Cambia al siguiente patrón
         self.pattern_index = (self.pattern_index + 1) % 6 # Aumenta el módulo a 6 para incluir los nuevos patrones
