@@ -23,8 +23,6 @@ class Estelar(pygame.sprite.Sprite):
         self.burst_timer = 0
         self.shoot_sound = pygame.mixer.Sound("Assets/Sonidos/disparo.wav")
         self.shoot_sound.set_volume(0.1)
-        # Utilizamos mascaras para generar colisiones pixel-perfect
-        #self.mask = pygame.mask.from_surface(self.image) - No es necesario escribirlo
 
     def draw_estelar(self):
         self.game.screen.blit(self.image, self.rect)
@@ -33,8 +31,7 @@ class Estelar(pygame.sprite.Sprite):
         self.input()
         self.move()
         self.handle_burst()
-
-        #Controles
+        
     def input(self):
         keys = pygame.key.get_pressed()
         self.direction.x = int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])
@@ -42,7 +39,7 @@ class Estelar(pygame.sprite.Sprite):
         
         if keys[pygame.K_SPACE]:
             if self.shoot_cooldown <= 0 and self.burst_count == 0:
-                self.burst_count = 1  # de cuanto quiero la rafaga
+                self.burst_count = 1 
                 self.burst_timer = 0
 
     def handle_burst(self):
@@ -50,7 +47,7 @@ class Estelar(pygame.sprite.Sprite):
             if self.burst_timer <= 0:
                 self.shoot()
                 self.burst_count -= 1
-                self.burst_timer = 5  # frames entre balas
+                self.burst_timer = 5 
             else:
                 self.burst_timer -= 1
         if self.shoot_cooldown > 0:
@@ -104,9 +101,9 @@ class Estelar(pygame.sprite.Sprite):
             bullet5 = Bullet(self.game, self.rect.centerx + 10, self.rect.top)
             self.game.bullets.add(bullet1, bullet2, bullet3, bullet4, bullet5)
         
-        self.shoot_sound.play()  # Reproduce el sonido aquí
+        self.shoot_sound.play() 
         if self.burst_count == 1:
-            self.shoot_cooldown = 25  # cooldown entre ráfagas para que no sea tremendo spam (temporal)
+            self.shoot_cooldown = 25 
             
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -119,7 +116,6 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.bottom = y
         self.speed = game.settings.bullet_speed
         self.damage = 10
-        #self.mask = pygame.mask.from_surface(self.image) - No es necesario escribirlo
 
     def draw_bullet(self):
         self.game.screen.blit(self.image, self.rect)
@@ -127,4 +123,4 @@ class Bullet(pygame.sprite.Sprite):
     def update(self):
         self.rect.y -= self.speed
         if self.rect.bottom < 0:
-            self.kill()  # Elimina las balitas
+            self.kill()

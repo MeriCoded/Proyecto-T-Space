@@ -13,36 +13,34 @@ class Boss(pygame.sprite.Sprite):
         self.delay = delay_ms
         self.start_time = pygame.time.get_ticks()
         self.health = max_health
-        self.max_health = max_health  # Agregado para la barra de vida
+        self.max_health = max_health
         self.alive = True
         self.bullet_group = bullet_group
         self.pattern_index = 0
 
         self.last_shot_time = 0
-        self.shot_delay = 2000  # Tiempo entre disparos en milisegundos
+        self.shot_delay = 2000
         
-        # Animación de entrada
-        self.target_y = 23  # Posición final donde debe estar
-        self.entering = False  # Si está en proceso de entrada
+        self.target_y = 23
+        self.entering = False
 
     def update(self):
         current_time = pygame.time.get_ticks()
         if not self.visible and current_time - self.start_time >= self.delay:
-            self.visible = True  # El jefe aparece tras el delay
-            self.entering = True  # Comienza la animación de entrada
-            self.rect.centery = -75  # Empieza fuera de pantalla (arriba)
-            
-        # Animación de entrada 
+            self.visible = True
+            self.entering = True
+            self.rect.centery = -75
+
         if self.entering and self.visible:
             if self.rect.centery < self.target_y:
-                self.rect.centery += 1  # Baja muy lentamente (1 píxel por frame)
+                self.rect.centery += 1
             else:
                 self.rect.centery = self.target_y
                 self.entering = False
 
         if self.health <= 0:
             self.alive = False
-            self.visible = False  # Deja de mostrarse si muere
+            self.visible = False
 
         if self.visible and self.alive and not self.entering:
             if current_time - self.last_shot_time > self.shot_delay:
@@ -52,25 +50,19 @@ class Boss(pygame.sprite.Sprite):
     def draw(self, screen):
         if self.visible and self.alive:
             screen.blit(self.image, self.rect)
-            # Agregar barra de vida
             self.draw_health_bar(screen)
 
     def draw_health_bar(self, screen):
-        # Configuración de la barra de vida
         bar_width = 60
         bar_height = 8
         bar_x = self.rect.centerx - bar_width // 2
         bar_y = self.rect.bottom -95
     
-        
-        # Fondo de la barra (rojo)
         pygame.draw.rect(screen, (255, 0, 0), (bar_x, bar_y, bar_width, bar_height))
         
-        # Vida actual (verde)
         health_percentage = self.health / self.max_health
         pygame.draw.rect(screen, (0, 255, 0), (bar_x, bar_y, bar_width * health_percentage, bar_height))
-        
-        # Borde de la barra (blanco)
+
         pygame.draw.rect(screen, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 2)
 
     def take_damage(self, damage):
@@ -79,7 +71,6 @@ class Boss(pygame.sprite.Sprite):
             print(f"Boss health: {self.health}")
 
     def shooting_pattern(self):
-        # Alterna entre patrones
         if self.pattern_index == 0:
             self.circular_shot()
         elif self.pattern_index == 1:
@@ -93,8 +84,7 @@ class Boss(pygame.sprite.Sprite):
         elif self.pattern_index == 5:
             self.scatter_shot()
 
-        # Cambia al siguiente patrón
-        self.pattern_index = (self.pattern_index + 1) % 6 # Aumenta el módulo a 6 para incluir los nuevos patrones
+        self.pattern_index = (self.pattern_index + 1) % 6
 
     def circular_shot(self):
         amount = 20
@@ -111,7 +101,7 @@ class Boss(pygame.sprite.Sprite):
         amount = 20
         origin_x = self.rect.centerx
         origin_y = self.rect.bottom - 20
-        time_offset = pygame.time.get_ticks() // 10  # Cambio continuo
+        time_offset = pygame.time.get_ticks() // 10
         for i in range(amount):
             angle = math.radians(i * (360 / amount) + time_offset % 360)
             direction = pygame.Vector2(math.cos(angle), math.sin(angle))
@@ -121,23 +111,22 @@ class Boss(pygame.sprite.Sprite):
     def fan_shot(self):
         origin_x = self.rect.centerx
         origin_y = self.rect.bottom
-        angles = [-30, -20, -10, 0, 10, 20, 30]  # grados con respecto al eje vertical (abajo)
+        angles = [-30, -20, -10, 0, 10, 20, 30]
 
         for angle in angles:
             rad = math.radians(angle)
-            direction = pygame.Vector2(math.sin(rad), math.cos(rad))  # ← CORRECTO: Y = cos, X = sin
+            direction = pygame.Vector2(math.sin(rad), math.cos(rad))
             bullet = BossBullet(origin_x, origin_y, direction, speed=5, settings=self.settings)
             self.bullet_group.add(bullet)
 
     def cross_shot(self):
         origin_x = self.rect.centerx
         origin_y = self.rect.bottom - 20
-        # Disparos en forma de cruz: arriba, abajo, izquierda, derecha
         directions = [
-            pygame.Vector2(0, -1),  # Arriba
-            pygame.Vector2(0, 1),   # Abajo
-            pygame.Vector2(-1, 0),  # Izquierda
-            pygame.Vector2(1, 0)    # Derecha
+            pygame.Vector2(0, -1), 
+            pygame.Vector2(0, 1),  
+            pygame.Vector2(-1, 0),  
+            pygame.Vector2(1, 0)    
         ]
         for direction in directions:
             bullet = BossBullet(origin_x, origin_y, direction, speed=4, settings=self.settings)
@@ -147,12 +136,11 @@ class Boss(pygame.sprite.Sprite):
         origin_x = self.rect.centerx
         origin_y = self.rect.bottom - 20
         num_bullets = 15
-        base_angle = math.radians(90)  # Apunta hacia abajo
-        amplitude = math.radians(45)  # Amplitud de la onda
-        frequency = 2 # Frecuencia de la onda
+        base_angle = math.radians(90)
+        amplitude = math.radians(45)  
+        frequency = 2 
 
         for i in range(num_bullets):
-            # Calcula el ángulo con una función seno para crear la onda
             angle = base_angle + amplitude * math.sin(frequency * i / num_bullets * math.pi)
             direction = pygame.Vector2(math.cos(angle), math.sin(angle))
             bullet = BossBullet(origin_x, origin_y, direction, speed=3, settings=self.settings)
@@ -163,8 +151,7 @@ class Boss(pygame.sprite.Sprite):
         origin_y = self.rect.bottom - 20
         num_bullets = 25
         for _ in range(num_bullets):
-            # Ángulo aleatorio para dispersión
-            angle = math.radians(randint(45, 135))  # Ángulos en un rango para que disparen hacia abajo
+            angle = math.radians(randint(45, 135))
             direction = pygame.Vector2(math.cos(angle), math.sin(angle)).normalize()
             bullet = BossBullet(origin_x, origin_y, direction, speed=randint(2, 5), settings=self.settings)
             self.bullet_group.add(bullet)
@@ -183,7 +170,6 @@ class BossBullet(pygame.sprite.Sprite):
         self.rect.x += self.direction.x * self.speed
         self.rect.y += self.direction.y * self.speed
 
-        # Eliminar si sale de la pantalla
         if (
             self.rect.top > self.settings.screen_height or
             self.rect.bottom < 0 or

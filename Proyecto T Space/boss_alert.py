@@ -4,35 +4,30 @@ class BossAlert(pygame.sprite.Sprite):
     def __init__(self, x, y, delay_ms, settings):
         super().__init__()
         self.settings = settings
-        self.delay = delay_ms  # Tiempo en milisegundos hasta que la alerta se vuelve visible
-        self.start_time = pygame.time.get_ticks() # Se establecerá al iniciar el juego
-        self.visible = False # La alerta no es visible al principio
+        self.delay = delay_ms
+        self.start_time = pygame.time.get_ticks()
+        self.visible = False
 
-        # Cargar la imagen del símbolo de exclamación
         self.image = pygame.image.load("Assets/Boss/BossAlert.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (80, 80)) # Ajusta el tamaño
+        self.image = pygame.transform.scale(self.image, (80, 80))
 
         if self.image:
             self.rect = self.image.get_rect(center=(x, y))
         else:
-            self.rect = pygame.Rect(x - 40, y - 40, 80, 80) # Rect placeholder if image fails
+            self.rect = pygame.Rect(x - 40, y - 40, 80, 80)
 
-        # Cargar sonido de alerta
         self.sound_played = False
         self.alert_sound = pygame.mixer.Sound("Assets/Sonidos/BossAlert.mp3")
         self.alert_sound.set_volume(0.3)
 
-        # Variables para el parpadeo
-        self.flash_interval = 100 # Intervalo de parpadeo en ms
+        self.flash_interval = 100 
         self.last_flash_time = 0
         self.show_icon = True
 
     def update(self, current_game_time):
-        # La alerta se vuelve visible cuando el tiempo del juego alcanza su delay
         if not self.visible and current_game_time >= self.delay:
             self.visible = True
-            
-        # Lógica de parpadeo si la alerta es visible
+
         if self.visible:
             if current_game_time - self.last_flash_time > self.flash_interval:
                 self.show_icon = not self.show_icon
@@ -58,4 +53,4 @@ class BossAlert(pygame.sprite.Sprite):
         self.sound_played = False
         self.last_flash_time = new_start_time
         self.show_icon = True
-        self.stop_sound() # Asegurarse de que el sonido se detenga al resetear
+        self.stop_sound()

@@ -37,7 +37,7 @@ class Window:
 
     def get_meteor_type(self):
         if self.start_time is None:
-            return "M1"  # O el tipo por defecto
+            return "M1"
         current_ticks = pygame.time.get_ticks()
         elapsed_time = (pygame.time.get_ticks() - self.start_time) // 1000
         print(f"Start Time: {self.start_time}, Current Ticks: {current_ticks}, Elapsed Time: {elapsed_time}s")
@@ -51,24 +51,23 @@ class Window:
             return "M4"
         else:
             return "M5"
-    
-    # Función para agregar las vidas de Estelar en pantalla    
+   
     def draw_lifes(self):
         life_icon = pygame.transform.scale(pygame.image.load("Assets/Player/life_icon.png"), (40, 40))
         icon_width = life_icon.get_width()
         icon_height = life_icon.get_height()
 
         for i in range(self.estelar.lifes):
-            x = self.settings.screen_width - (i + 1) * (icon_width - 5) - 5  # de derecha a izquierda
-            y = self.settings.screen_height - icon_height - 5  # margen inferior
+            x = self.settings.screen_width - (i + 1) * (icon_width - 5) - 5
+            y = self.settings.screen_height - icon_height - 5 
             self.screen.blit(life_icon, (x, y))
 
     def reset_game(self):
-        self.__init__()  # Reinicia el juego desde cero
+        self.__init__() 
 
     def run(self):
-        self.start_time = pygame.time.get_ticks()  # El contador empieza aquí
-        self.boss_alert.reset(self.start_time)     # <-- Añade esta línea
+        self.start_time = pygame.time.get_ticks() 
+        self.boss_alert.reset(self.start_time)  
         running = True
 
         while running:
@@ -101,7 +100,7 @@ class Window:
 
                 if self.boss_alert.visible and not self.boss.visible:
                     self.boss_alert.play_sound_once()
-                elif self.boss.visible: # Si el jefe es visible, detener y detener el sonido de la alerta
+                elif self.boss.visible:
                     self.boss_alert.stop_sound()
 
                 for bullet in self.bullets.sprites():
@@ -110,16 +109,14 @@ class Window:
                         bullet.kill()
 
                 self.meteors_grandes.update(delta_time)
-                
-                # Colisiones - Entre balas y meteoritos
+
                 hits = pygame.sprite.groupcollide(self.meteors_grandes, self.bullets, True, True)
 
                 for meteor in hits:
                     meteor.break_apart((self.meteors_grandes,))
                     self.score += meteor.get_points()
                     print(self.score)
-                    
-                # Colisiones - Entre Estelar y los meteoritos
+
                 collided_meteors = pygame.sprite.spritecollide(self.estelar, self.meteors_grandes, True, pygame.sprite.collide_mask)
                 collided_bullets = pygame.sprite.spritecollide(self.estelar, self.enemy_bullets, True, pygame.sprite.collide_mask)
 
